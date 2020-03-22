@@ -167,18 +167,31 @@ class TeamBoardView(APIView):
 class ListView(APIView):
     def get(self, request):
         id = request.GET["id"]
+        try:
+            board = PersonalBoard.objects.get(id=id)
+            listOfLists = List.objects.filter(board=board)
+            lists = []
+            for lis in listOfLists:
+                new_obj = {
+                    "name": lis.name,
+                    "id": lis.id
+                }
+                lists.append(new_obj)
 
-        board = PersonalBoard.objects.get(id=id)
-        listOfLists = List.objects.filter(board=board)
-        lists = []
-        for lis in listOfLists:
-            new_obj = {
-                "name": lis.name,
-                "id": lis.id
-            }
-            lists.append(new_obj)
+            return JsonResponse(lists, safe=False)
+        except:
+            board = TeamBoard.objects.get(id=id)
+            listOfLists = List.objects.filter(teamBoard=board)
+            lists = []
+            for lis in listOfLists:
+                new_obj = {
+                    "name": lis.name,
+                    "id": lis.id
+                }
+                lists.append(new_obj)
 
-        return JsonResponse(lists, safe=False)
+            return JsonResponse(lists, safe=False)
+
 
     def post(self, request):
         id = request.data["boardId"]
