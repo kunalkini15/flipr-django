@@ -9,5 +9,6 @@ urlpatterns = [
     path('team_boards/', views.TeamBoardView.as_view(), name="teamBoard"),
     path('lists/', views.ListView.as_view(), name="lists"),
     path('cards/', views.CardView.as_view(), name="cards"),
-    path('attachment/', views.AttachmentView.as_view(), name="attachment")
+    path('attachment/', views.AttachmentView.as_view(), name="attachment"),
+    path('downloadAttachment/', views.DownloadAttachMent.as_view(), name="downloadAttachment")
 ]

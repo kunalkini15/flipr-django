@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -261,13 +261,15 @@ class CardView(APIView):
 
 class AttachmentView(APIView):
     def post(self, request):
-
+        id = request.data["id"]
         name = (request.data["file"].name)
         file = request.FILES["file"]
         card = Card.objects.get(id=request.data["id"])
 
+        splitName = name.split(".")
         attach = Attachment.objects.create(card=card, name=name, path=None)
-        default_storage.save(name, file)
+        filename = splitName[0] + str(attach.id) + "." + splitName[1]
+        default_storage.save(filename, file)
         return JsonResponse("Done", safe=False)
 
     def get(self, request):
@@ -283,7 +285,10 @@ class AttachmentView(APIView):
         print(len(attachments))
         atts = []
         for attachment in attachments:
-            file = default_storage.open(attachment.name)
+            name = attachment.name
+            splitName = name.split(".")
+            filename = splitName[0] + str(attachment.id) + "." + splitName[1]
+            file = default_storage.open(filename)
             new_obj = {
                 "id": attachment.id,
                 "name": attachment.name,
@@ -291,3 +296,16 @@ class AttachmentView(APIView):
             atts.append(new_obj)
 
         return JsonResponse(atts, safe=False)
+
+class DownloadAttachMent(APIView):
+    def get(self, request):
+        id = request.GET["id"]
+        name = request.GET["name"]
+
+        splitName = name.split(".")
+        filename = splitName[0] + str(id) + "." + splitName[1]
+
+        file = default_storage.open(filename)
+        response = HttpResponse(file, content_type="multipart/form-data")
+        response['Content-Disposition'] = "attachment; filename=%s" % name
+        return response
