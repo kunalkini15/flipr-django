@@ -1,0 +1,1 @@
+web: gunicorn flipr_kunal.wsgi
