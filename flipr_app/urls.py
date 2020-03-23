@@ -12,5 +12,5 @@ urlpatterns = [
     path('cards/', views.CardView.as_view(), name="cards"),
     path('attachment/', views.AttachmentView.as_view(), name="attachment"),
     path('downloadAttachment/', views.DownloadAttachMent.as_view(), name="downloadAttachment"),
-
+    path('moveCard/', views.MoveCardView.as_view(), name="moveCard")
  ]

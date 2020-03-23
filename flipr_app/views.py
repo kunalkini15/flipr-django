@@ -165,7 +165,8 @@ class TeamBoardView(APIView):
 class ListView(APIView):
     def get(self, request):
         id = request.GET["id"]
-        try:
+        personal = request.GET["personal"]
+        if personal == True or personal=="true":
             board = PersonalBoard.objects.get(id=id)
             listOfLists = List.objects.filter(board=board)
             lists = []
@@ -177,7 +178,7 @@ class ListView(APIView):
                 lists.append(new_obj)
 
             return JsonResponse(lists, safe=False)
-        except:
+        else:
             board = TeamBoard.objects.get(id=id)
             listOfLists = List.objects.filter(teamBoard=board)
             lists = []
@@ -194,8 +195,14 @@ class ListView(APIView):
     def post(self, request):
         id = request.data["boardId"]
         name = request.data["name"]
-        board = PersonalBoard.objects.get(id=id)
-        list = List.objects.create(board=board, name=name)
+        personal = request.data["personal"]
+
+        if personal == True or personal == "true":
+            board = PersonalBoard.objects.get(id=id)
+            list = List.objects.create(board=board, name=name)
+        else:
+            board = TeamBoard.objects.get(id=id)
+            list = List.objects.create(teamBoard = board, name=name)
 
         return JsonResponse("Successfull", safe=False)
 
@@ -255,7 +262,17 @@ class CardView(APIView):
 
         del updateDict["id"]
         Card.objects.filter(id=id).update(**updateDict)
-        return JsonResponse("DOne", safe=False)
+        return JsonResponse("Done", safe=False)
+
+class MoveCardView(APIView):
+    def post(self, request):
+        card_id = request.data["cardId"]
+        list_id = request.data["listId"]
+
+        list_obj = List.objects.get(id=list_id)
+        card = Card.objects.filter(id = card_id).update(list_fk=list_obj)
+
+        return JsonResponse("Done", safe=False)
 
 class AttachmentView(APIView):
     def post(self, request):
