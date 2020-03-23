@@ -2,6 +2,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from flipr_app import views
+
 urlpatterns = [
     path('register/', views.Register.as_view(), name="register"),
     path('login/', views.Login.as_view(), name="login"),
@@ -10,5 +11,6 @@ urlpatterns = [
     path('lists/', views.ListView.as_view(), name="lists"),
     path('cards/', views.CardView.as_view(), name="cards"),
     path('attachment/', views.AttachmentView.as_view(), name="attachment"),
-    path('downloadAttachment/', views.DownloadAttachMent.as_view(), name="downloadAttachment")
-]
+    path('downloadAttachment/', views.DownloadAttachMent.as_view(), name="downloadAttachment"),
+
+ ]

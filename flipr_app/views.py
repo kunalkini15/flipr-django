@@ -41,7 +41,8 @@ class Login(APIView):
         password = request.data["password"]
 
         try:
-            user = User.objects.get(username=email)
+            # user = User.objects.get(username=email)
+            user = authenticate(username=email, password=password)
             if user:
                 login(request, user)
                 return Response("User Logged in successfully", status=status.HTTP_200_OK)
@@ -50,9 +51,6 @@ class Login(APIView):
         except:
             return Response("User doesn't exist", status=status.HTTP_404_NOT_FOUND)
 
-@login_required
-def user_logout(request):
-    logout(request)
 
 
 class PersonalBoardView(APIView):
